@@ -15,8 +15,18 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+    const note = new Note({
+        title: req.body.title,
+        content: req.body.content
+    });
 
+    try {
+        const newNote = await note.save();
+        res.status(200).json(newNote);
+    } catch (error) {
+        res.status(400).json({message: error.message});
+    }
 });
 
 router.patch('/:id', (req, res) => {
