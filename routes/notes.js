@@ -26,8 +26,20 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.patch('/:id', getNote, (req, res) => {
+router.patch('/:id', getNote, async (req, res) => {
+    if (req.body.title != null) {
+        res.note.title = req.body.title;
+    }
+    if (req.body.content != null) {
+        res.note.content = req.body.content;
+    }
 
+    try {
+        const updatedNote = await res.note.save();
+        res.json(updatedNote);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 });
 
 router.delete('/:id', getNote, async (req, res) => {
