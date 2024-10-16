@@ -3,9 +3,6 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Note = require('../models/note');
 
-
-module.exports = router;
-
 router.get('/', async (req, res) => {
     try {
         const notes = await Note.find()
@@ -25,15 +22,36 @@ router.post('/', async (req, res) => {
         const newNote = await note.save();
         res.status(200).json(newNote);
     } catch (error) {
-        res.status(400).json({message: error.message});
+        res.status(400).json({ message: error.message });
     }
 });
 
-router.patch('/:id', (req, res) => {
+router.patch('/:id', getNote, (req, res) => {
 
 });
 
-router.delete('/:id', (req, res) => {
-
+router.delete('/:id', getNote, async (req, res) => {
+    try {
+        await res.note.deleteOne();
+        res.status(200).json({ message: "note is deleted" })
+    } catch (error) {
+        res.status(500).json({ "message": error.message });
+    }
 });
+
+async function getNote(req, res, next) {
+    let note;
+    try {
+        note = await Note.findById(req.params.id);
+        if (note === null) {
+            return res.status(404).json({ message: "can't find note" })
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+    res.note = note;
+    next();
+}
+module.exports = router;
 
