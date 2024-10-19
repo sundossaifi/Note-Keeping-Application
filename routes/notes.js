@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     }
     try {
         results.notes = await Note.find().limit(limit).skip(startIndex).exec();
-        res.status(200).json({results});
+        res.status(200).json({ results });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -86,5 +86,27 @@ async function getNote(req, res, next) {
     res.note = note;
     next();
 }
+
+router.get('/search', async (req, res) => {
+    const query = req.query.query;
+
+    if (!query) {
+        return res.status(400).json({ message: "Search query is required" });
+    }
+
+    try {
+        const notes = await Note.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { content: { $regex: query, $options: 'i' } }
+            ]
+        });
+
+        res.status(200).json(notes);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;
 
