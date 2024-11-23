@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon server.js"
+    "devStart": "nodemon server/index.js",
+    "start": "node server/index.js"
+
   },
   "author": "",
   "license": "ISC",
