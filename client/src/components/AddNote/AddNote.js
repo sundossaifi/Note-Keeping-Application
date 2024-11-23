@@ -1,12 +1,34 @@
 import { useState } from 'react';
 import { TextField, Button, Card, CardContent, Typography } from '@mui/material';
-import styles from './AddNote.module.css'
+import styles from './AddNote.module.css';
+import { addNote } from '../../api';
 
-export default function AddNote() {
+export default function AddNote({ onAddNote }) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [note, setNote] = useState({ title: '', content: '' });
 
     function handleToggleExpand() {
         setIsExpanded(!isExpanded);
+        setNote({ title: '', content: '' });
+    }
+
+    function handleChange(e) {
+        setNote({ ...note, [e.target.name]: e.target.value })
+    }
+
+    async function handleSave() {
+        if (!note.title.trim() || !note.content.trim()) {
+            console.log('Title or Content cannot be empty');
+            return;  
+        }
+        try {
+            const data = await addNote(note);
+            onAddNote(data);
+            setNote({ title: '', content: '' });
+        } catch (error) {
+            console.error('Error deleting note:', error);
+        }
+
     }
 
     return (
@@ -18,19 +40,30 @@ export default function AddNote() {
                     <CardContent>
                         <TextField
                             label="Title"
+                            name='title'
                             variant="outlined"
                             fullWidth
                             sx={{ marginBottom: '10px' }}
+                            value={note.title}
+                            onChange={handleChange}
                         />
                         <TextField
                             label="Content"
+                            name='content'
                             variant="outlined"
                             fullWidth
                             multiline
                             rows={4}
                             sx={{ marginBottom: '10px' }}
+                            value={note.content}
+                            onChange={handleChange}
                         />
-                        <Button color="primary" variant="contained" sx={{ marginRight: '10px' }}>
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            sx={{ marginRight: '10px' }}
+                            onClick={handleSave}
+                        >
                             Save
                         </Button>
                         <Button onClick={handleToggleExpand} color="secondary" variant="outlined">

@@ -53,10 +53,14 @@ export default function NoteApp() {
         }
     }
 
+    function handleAddNote(note) {
+        setNotes([note, ...notes])
+    }
+
     return (
         <>
             <NavBar onSearchNotes={handleSearchNotes} />
-            <AddNote />
+            <AddNote onAddNote={handleAddNote} />
             <NotesGrid notes={searchResults.length > 0 ? searchResults : notes} onDelete={handleDelete} />
             {/* <div className={styles.btncontainer}>
                 <Button

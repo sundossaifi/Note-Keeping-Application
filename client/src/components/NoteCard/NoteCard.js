@@ -29,7 +29,7 @@ export default function NoteCard({ note, onDelete }) {
             <CardContent>
                 <Typography variant="h6">{note.title}</Typography>
                 <Typography variant="body2">{note.content}</Typography>
-                <Typography variant="caption">{note.date}</Typography>
+                <Typography variant="caption">{note.creationDate}</Typography>
             </CardContent>
 
             {isHovered && (
