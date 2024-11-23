@@ -1,14 +1,30 @@
-import{ useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { deleteNote } from '../../api';
 
-export default function NoteCard({ note }) {
+export default function NoteCard({ note, onDelete }) {
     const [isHovered, setIsHovered] = useState(false);
+
+    async function handleDelete(e) {
+        e.stopPropagation();
+        const confirmDelete = window.confirm(
+            "Are you sure You want to delete " + note.title
+        );
+        if (!confirmDelete) return;
+        try {
+            await deleteNote(note._id)
+            onDelete(note._id)
+        } catch (error) {
+            console.error('Error deleting note:', error);
+        }
+    }
+
     return (
         <Card
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            sx={{ width: 250, position: 'relative', cursor:'pointer' }}
+            sx={{ width: 250, position: 'relative', cursor: 'pointer' }}
         >
             <CardContent>
                 <Typography variant="h6">{note.title}</Typography>
@@ -19,6 +35,7 @@ export default function NoteCard({ note }) {
             {isHovered && (
                 <IconButton
                     sx={{ position: 'absolute', bottom: 5, right: 5 }}
+                    onClick={handleDelete}
                 >
                     <DeleteIcon />
                 </IconButton>

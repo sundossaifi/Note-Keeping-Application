@@ -41,7 +41,6 @@ export async function updateNote(id, updatedNote) {
   }
 };
 
-
 export async function deleteNote(id) {
   try {
     const response = await fetch(`${API_URL}/${id}`, {
