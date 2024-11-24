@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Card, CardContent, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteNote } from '../../api';
+import { deleteNote } from '../api';
 
-export default function NoteCard({ note, onDelete }) {
+export default function NoteCard({ note, onDelete, onEdit }) {
     const [isHovered, setIsHovered] = useState(false);
 
     async function handleDelete(e) {
@@ -20,11 +20,16 @@ export default function NoteCard({ note, onDelete }) {
         }
     }
 
+    function handleEdit() {
+        onEdit(note);
+    }
+
     return (
         <Card
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             sx={{ width: 250, position: 'relative', cursor: 'pointer' }}
+            onClick={handleEdit}
         >
             <CardContent>
                 <Typography variant="h6">{note.title}</Typography>

@@ -1,14 +1,17 @@
 import NavBar from './NavBar/NavBar';
 import NotesGrid from './NotesGrid/NotesGrid';
 import AddNote from './AddNote/AddNote';
+import NoteDialog from './NoteDialog';
 import styles from '../styles/NoteApp.module.css'
 import { useState, useEffect } from 'react';
-import { fetchNotes, searchNotes } from '../api';
+import { fetchNotes, searchNotes, updateNote } from '../api';
 import { Button } from '@mui/material';
 
 export default function NoteApp() {
     const [notes, setNotes] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
+    const [selectedNote, setSelectedNote] = useState({ title: '', content: '' });
+    const [openDialog, setOpenDialog] = useState(false);
     // const [page, setPage] = useState(1);
     // const [limit] = useState(2);
 
@@ -57,11 +60,32 @@ export default function NoteApp() {
         setNotes([note, ...notes])
     }
 
+    function handleEdit(note) {
+        setSelectedNote(note);
+        setOpenDialog(true);
+    }
+
+    function handleCloseDialog() {
+        setOpenDialog(false);
+    }
+
+    async function handleSaveUpdatedNote(updatedNote) {
+        try {
+            const data = await updateNote(updatedNote._id, updatedNote);
+            const updatedNotes = notes.map((note) =>
+                note._id === data._id ? data : note
+            );
+            setNotes(updatedNotes);
+        } catch (error) {
+            console.error('Error saving updated note:', error);
+        }
+    }
+
     return (
         <>
             <NavBar onSearchNotes={handleSearchNotes} />
             <AddNote onAddNote={handleAddNote} />
-            <NotesGrid notes={searchResults.length > 0 ? searchResults : notes} onDelete={handleDelete} />
+            <NotesGrid notes={searchResults.length > 0 ? searchResults : notes} onDelete={handleDelete} onEdit={handleEdit} />
             {/* <div className={styles.btncontainer}>
                 <Button
                     onClick={goToPreviousPage}
@@ -77,6 +101,12 @@ export default function NoteApp() {
                     Next
                 </Button>
             </div> */}
+            <NoteDialog
+                note={selectedNote}
+                open={openDialog}
+                onSave={handleSaveUpdatedNote}
+                onClose={handleCloseDialog}
+            />
         </>
     );
 }
