@@ -1,27 +1,23 @@
 import { useState } from 'react';
 import { Card, CardContent, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteNote } from '../api';
+import { useNotes } from '../context/NotesContext';
 
-export default function NoteCard({ note, onDelete, onEdit }) {
+export default function NoteCard({ note }) {
     const [isHovered, setIsHovered] = useState(false);
+    const { handleDeleteNote, handleEditNote } = useNotes(); 
 
-    async function handleDelete(e) {
+    function handleDelete(e) {
         e.stopPropagation();
         const confirmDelete = window.confirm(
             "Are you sure You want to delete " + note.title
         );
         if (!confirmDelete) return;
-        try {
-            await deleteNote(note._id)
-            onDelete(note._id)
-        } catch (error) {
-            console.error('Error deleting note:', error);
-        }
+        handleDeleteNote(note._id);
     }
 
     function handleEdit() {
-        onEdit(note);
+        handleEditNote(note);
     }
 
     return (

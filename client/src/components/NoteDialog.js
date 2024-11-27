@@ -1,25 +1,27 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField } from '@mui/material';
+import { useNotes } from '../context/NotesContext'; 
 
-export default function NoteDialog({ note, open, onSave, onClose }) {
-    const [updatedNote, setUpdatedNote] = useState(note);
+export default function NoteDialog() {
+    const { selectedNote, openDialog, handleSaveUpdatedNote, handleCloseDialog } = useNotes();
+    const [updatedNote, setUpdatedNote] = useState(selectedNote);
 
     useEffect(() => {
-        setUpdatedNote(note);
-    }, [note]);
+        setUpdatedNote(selectedNote);
+    }, [selectedNote]);
 
     function handleChange(e) {
-        setUpdatedNote({ ...updatedNote, [e.target.name]: e.target.value })
+        setUpdatedNote({ ...updatedNote, [e.target.name]: e.target.value });
     }
 
     function handleSave() {
-        onSave(updatedNote);
-        onClose();
+        handleSaveUpdatedNote(updatedNote);
+        handleCloseDialog(); 
     }
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle sx={{marginBottom:'10px'}}>Edit Note</DialogTitle>
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+            <DialogTitle sx={{ marginBottom: '10px' }}>Edit Note</DialogTitle>
             <DialogContent>
                 <TextField
                     name="title"
@@ -41,7 +43,7 @@ export default function NoteDialog({ note, open, onSave, onClose }) {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">
+                <Button onClick={handleCloseDialog} color="primary">
                     Cancel
                 </Button>
                 <Button onClick={handleSave} color="primary">

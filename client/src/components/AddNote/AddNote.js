@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { TextField, Button, Card, CardContent, Typography } from '@mui/material';
+import { useNotes } from '../../context/NotesContext';
 import styles from './AddNote.module.css';
-import { addNote } from '../../api';
 
-export default function AddNote({ onAddNote }) {
+export default function AddNote() {
+    const { handleAddNote } = useNotes();
     const [isExpanded, setIsExpanded] = useState(false);
     const [note, setNote] = useState({ title: '', content: '' });
 
@@ -13,22 +14,20 @@ export default function AddNote({ onAddNote }) {
     }
 
     function handleChange(e) {
-        setNote({ ...note, [e.target.name]: e.target.value })
+        setNote({ ...note, [e.target.name]: e.target.value });
     }
 
     async function handleSave() {
         if (!note.title.trim() || !note.content.trim()) {
             console.log('Title or Content cannot be empty');
-            return;  
+            return;
         }
         try {
-            const data = await addNote(note);
-            onAddNote(data);
+            handleAddNote(note); 
             setNote({ title: '', content: '' });
         } catch (error) {
-            console.error('Error deleting note:', error);
+            console.error('Error adding note:', error);
         }
-
     }
 
     return (

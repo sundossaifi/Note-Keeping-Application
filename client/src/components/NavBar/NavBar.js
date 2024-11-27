@@ -1,18 +1,15 @@
-import { AppBar, Toolbar, Typography, TextField } from '@mui/material';
-import InputAdornment from '@mui/material/InputAdornment';
+import { AppBar, Toolbar, Typography, TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import styles from './NavBar.module.css';
-import { useState } from 'react';
+import { useNotes } from '../../context/NotesContext';
 
-export default function NavBar({ onSearchNotes }) {
-    const [query, setQuery] = useState('');
+export default function NavBar() {
+    const { handleSearchNotes } = useNotes();
 
     function handleSearch(e) {
         const queryValue = e.target.value.trim();
-        setQuery(queryValue);
-        onSearchNotes(queryValue);
+        handleSearchNotes(queryValue);
     }
-
 
     return (
         <AppBar position='sticky'>
@@ -22,7 +19,6 @@ export default function NavBar({ onSearchNotes }) {
                         My Note Keeper
                     </Typography>
                     <TextField
-                        value={query}
                         size='small'
                         hiddenLabel
                         placeholder='search'
